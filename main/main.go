@@ -51,4 +51,8 @@ func main() {
 
 	// nil means no multiplexing
 	http.ListenAndServe(":8000", nil)
+
+	// The fileserver can be served using built-in fileserver
+	// Then our MyHandler can be removed
+	// http.ListenAndServe(":8000", http.FileServer(http.Dir("public")))
 }
