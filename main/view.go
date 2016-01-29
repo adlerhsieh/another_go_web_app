@@ -4,6 +4,9 @@ import (
 	"net/http"
 	"os"
 	"text/template"
+  "bufio"
+  "strings"
+  "fmt"
 )
 
 func main() {
@@ -19,7 +22,32 @@ func main() {
       w.Write([]byte("404 - " + http.StatusText(404)))
 		}
 	})
+  // redirect /img/ and /css/ dir to assets/img/ and assets/css/
+  http.HandleFunc("/img/", serveAssets)
+  http.HandleFunc("/css/", serveAssets)
 	http.ListenAndServe(":8000", nil)
+}
+
+func serveAssets(w http.ResponseWriter, req *http.Request) {
+  fmt.Println(req.URL.Path)
+  path := "assets" + req.URL.Path
+  var contentType string
+  if strings.HasSuffix(path, ".css") {
+    contentType = "text/css"
+  } else if strings.HasSuffix(path, ".png") {
+    contentType = "image/png"
+  } else {
+    contentType = "text/plain"
+  }
+  f, err := os.Open(path)
+  if err == nil {
+    defer f.Close()
+    w.Header().Add("Content Type", contentType)
+    br := bufio.NewReader(f)
+    br.WriteTo(w)
+  } else {
+    w.WriteHeader(404)
+  }
 }
 
 func populateTemplates() *template.Template {
