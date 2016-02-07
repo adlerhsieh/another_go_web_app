@@ -2,7 +2,7 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	// "fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -13,14 +13,14 @@ import (
 func main() {
 	templates := populateTemplates()
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		// Load template according to the requested path
+		// Load template according to the requested path, excluding the leading "/"
 		requestedFile := req.URL.Path[1:]
 		template := templates.Lookup(requestedFile + ".html")
 
 		var context interface{} = nil
-		if requestedFile == "index" {
-			context = viewmodels.GetHome()
-		}
+		// if requestedFile == "index" {
+			context = viewmodels.Get("My Title", requestedFile)
+		// }
 
 		if template != nil {
 			template.Execute(w, context)
@@ -36,7 +36,7 @@ func main() {
 }
 
 func serveAssets(w http.ResponseWriter, req *http.Request) {
-	fmt.Println(req.URL.Path)
+	// fmt.Println(req.URL.Path)
 	path := "assets" + req.URL.Path
 	var contentType string
 	if strings.HasSuffix(path, ".css") {

@@ -9,10 +9,10 @@ type Home struct {
   Active string
 }
 
-func GetHome() Home {
+func Get(title, active string) Home {
   result := Home{
-    Title: "Lemon",
-    Active: "index",
+    Title: title,
+    Active: active,
   }
   return result
 }
