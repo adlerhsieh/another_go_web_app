@@ -3,7 +3,6 @@ package controllers
 import (
 	"bufio"
 	// "fmt"
-	"github.com/adlerhsieh/web/viewmodels"
 	"net/http"
 	"os"
 	"strings"
@@ -11,21 +10,30 @@ import (
 )
 
 func Register(templates *template.Template) {
-	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		// Load template according to the requested path, excluding the leading "/"
-		requestedFile := req.URL.Path[1:]
-		template := templates.Lookup(requestedFile + ".html")
+	// http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+	// 	// Load template according to the requested path, excluding the leading "/"
+	// 	requestedFile := req.URL.Path[1:]
+	// 	template := templates.Lookup(requestedFile + ".html")
+	//
+	// 	var context interface{} = nil
+	// 	context = viewmodels.Get("My Title", requestedFile)
+	//
+	// 	if template != nil {
+	// 		template.Execute(w, context)
+	// 	} else {
+	// 		w.WriteHeader(404)
+	// 		w.Write([]byte("404 - " + http.StatusText(404)))
+	// 	}
+	// })
 
-		var context interface{} = nil
-		context = viewmodels.Get("My Title", requestedFile)
+	ic := new(indexController)
+	ic.template = templates.Lookup("index.html")
+	http.HandleFunc("/index", ic.get)
 
-		if template != nil {
-			template.Execute(w, context)
-		} else {
-			w.WriteHeader(404)
-			w.Write([]byte("404 - " + http.StatusText(404)))
-		}
-	})
+	cc := new(categoriesController)
+	cc.template = templates.Lookup("categories.html")
+	http.HandleFunc("/categories", cc.get)
+
 	// redirect /img/ and /css/ dir to assets/img/ and assets/css/
 	http.HandleFunc("/img/", serveAssets)
 	http.HandleFunc("/css/", serveAssets)
